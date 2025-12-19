@@ -23,14 +23,14 @@ class MainWindow(QMainWindow):
         #enter rating
         self.rating = QSpinBox()
 
-        self.rating.setRange(800,2000)
+        self.rating.setRange(800,3500)
         self.rating.setSingleStep(100)
         self.rating.lineEdit().setReadOnly(True)
 
         #enter number of problems
         self.numberOf = QSpinBox()
 
-        self.numberOf.setRange(1,10)
+        self.numberOf.setRange(1,20)
         self.numberOf.lineEdit().setReadOnly(True)
 
         #enter button
@@ -55,8 +55,6 @@ class MainWindow(QMainWindow):
 
     def enter_function(self):
         print("clicked")
-        #dlg = QDialog(self)
-        #dlg.exec()
         self.get_random_problem()
 
     def get_random_problem(self):
@@ -80,6 +78,9 @@ class MainWindow(QMainWindow):
 
                 chosen = random.sample(problems, count)
                 print(chosen)
+
+                dlg = CustomDialog(chosen)
+                dlg.exec()
             else:
                 print("Error:", response.status_code, response.text)
         except requests.exceptions.RequestException as e:
@@ -89,11 +90,32 @@ class MainWindow(QMainWindow):
         print("check completion")
 
 class CustomDialog(QDialog):
-     def __init__(self):
+     def __init__(self, problems):
         super().__init__()
         self.setWindowTitle("CF Problems")
 
-## I want to create a dialog pop up that shows the CF Problems after the enter button is pressed
+        layout = QVBoxLayout()
+
+        if not problems:
+             layout.addWidget(QLabel("Error/No problems found"))
+        else:
+             for p in problems:
+                contestId = p[0]
+                problemIndex = p[1]
+
+                url = f"https://codeforces.com/problemset/problem/{contestId}/{problemIndex}"
+                
+                linkText = f'<a href="{url}">Problem {contestId}{problemIndex}</a>'
+
+                label = QLabel(linkText)
+                label.setOpenExternalLinks(True)
+                layout.addWidget(label)
+        closeButton = QPushButton("Close")
+        closeButton.clicked.connect(self.accept)
+        layout.addWidget(closeButton)
+
+        self.setLayout(layout)
+
 
 
 app = QApplication(sys.argv)
