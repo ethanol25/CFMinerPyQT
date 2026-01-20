@@ -1,0 +1,9 @@
+[project]
+name = "cfminerpyqt"
+version = "0.1.0"
+description = "Desktop app that randomly searches for rated codeforce problems"
+requires-python = ">=3.10"
+dependencies = [
+    "pyqt6>=6.10.2",
+    "requests>=2.32.5",
+]
